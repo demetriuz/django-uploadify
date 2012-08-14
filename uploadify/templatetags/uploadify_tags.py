@@ -24,7 +24,7 @@ class MultiFileUpload(template.Node):
 
         options = {'fileDataName': 'Filedata'}
         for key, value in self.options.items():
-            options[key] = resolve_variable(value, context)
+            options[key] = value
         js_options = ",".join(map(lambda item: "'%s': '%s'" % (item[0], item[1]),
                                   options.items()))
 
