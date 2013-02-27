@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 
-#This project forked from http://github.com/gsiegman/django-uploadify
-
-from distutils.core import setup
+from setuptools import setup
 from uploadify import PROJECT, VERSION
 
 setup(
     name=PROJECT,
     version=VERSION,
     description='Django integration of Uploadify jQuery plugin.',
-    author='Vlad Frolov',
-    author_email='frolvlad@gmail.com',
-    url='http://github.com/frol/django-uploadify',
+    author='Dmitry Lazarko',
+    author_email='alt0064@gmail.com',
+    url='https://github.com/demetriuz/django-uploadify',
     packages=['uploadify', 'uploadify.templatetags'],
     package_data={'uploadify': ['templates/uploadify/*.html']},
     install_requires = [ 'django >= 1.3', 'django-misc' ],
