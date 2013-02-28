@@ -24,16 +24,17 @@ class MultiFileUpload(template.Node):
         else:
             unique_id = ""
 
-        options = {'fileDataName': mark_safe('"Filedata"')}
+        options = {'fileObjName': mark_safe('"Filedata"')}
         for key, value in self.options.items():
             options[key] = mark_safe(value)
 
-        js_options = options
+
+        # js_options = options
 
         auto = options.get('auto', False)
         
         data = {
-            'fileDataName': options['fileDataName'],
+            'fileObjName': options['fileObjName'],
             'sender': mark_safe(str(resolve_variable(self.sender, context))),
         }
         for key, value in self.data.items():
@@ -44,8 +45,8 @@ class MultiFileUpload(template.Node):
             'uploadify_data': data,
             'uploadify_path': settings.UPLOADIFY_PATH,
             'uploadify_version': settings.UPLOADIFY_VERSION,
-            'uploadify_options': js_options,
-            'uploadify_filename': options['fileDataName'],
+            'uploadify_options': options,
+            'uploadify_filename': options['fileObjName'],
             'uploadify_auto': auto,
         })
 
@@ -59,7 +60,7 @@ def multi_file_upload(parser, token):
     Displays a Flash-based interface for uploading multiple files.
     For each POST request (after file upload) send GET query with `unique_id`.
 
-    {% multi_file_upload sender='SomeThing' fileDataName='"Filename"' %}
+    {% multi_file_upload sender='SomeThing' fileObjName='"Filename"' %}
 
     For all options see http://www.uploadify.com/documentation/
 

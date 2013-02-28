@@ -17,7 +17,7 @@ def upload(request, *args, **kwargs):
     if not request.user.is_authenticated():
         raise Http404
     sender = request.POST.get('sender', 'uploadify')
-    filename = request.POST.get('fileDataName', 'Filename')
+    filename = request.POST.get('fileObjName', 'Filename')
     if request.FILES:
         received_list = upload_received.send(sender=sender, request=request,
             data=request.FILES[filename])
