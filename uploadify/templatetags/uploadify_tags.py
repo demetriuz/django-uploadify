@@ -1,6 +1,7 @@
 from django import template
 from django.template import resolve_variable
 from django.utils import simplejson
+from django.utils.safestring import mark_safe
 
 from uploadify import settings
 
@@ -17,29 +18,30 @@ class MultiFileUpload(template.Node):
         self.options = kwargs
        
     def render(self, context):
+
         if self.unique_id is not None:
             unique_id = "?unique_id=%s" % str(resolve_variable(self.unique_id, context))
         else:
             unique_id = ""
 
-        options = {'fileDataName': 'Filedata'}
+        options = {'fileDataName': mark_safe('"Filedata"')}
         for key, value in self.options.items():
-            options[key] = value
-        js_options = ",".join(map(lambda item: "'%s': '%s'" % (item[0], item[1]),
-                                  options.items()))
+            options[key] = mark_safe(value)
+
+        js_options = options
 
         auto = options.get('auto', False)
         
         data = {
             'fileDataName': options['fileDataName'],
-            'sender': str(resolve_variable(self.sender, context)),
+            'sender': mark_safe(str(resolve_variable(self.sender, context))),
         }
         for key, value in self.data.items():
             data[key] = resolve_variable(value, context)
 
         context.update({
             'uploadify_query': unique_id,
-            'uploadify_data': simplejson.dumps(data)[1:-1],
+            'uploadify_data': data,
             'uploadify_path': settings.UPLOADIFY_PATH,
             'uploadify_version': settings.UPLOADIFY_VERSION,
             'uploadify_options': js_options,
@@ -57,7 +59,7 @@ def multi_file_upload(parser, token):
     Displays a Flash-based interface for uploading multiple files.
     For each POST request (after file upload) send GET query with `unique_id`.
 
-    {% multi_file_upload sender='SomeThing' fileDataName='Filename' %}
+    {% multi_file_upload sender='SomeThing' fileDataName='"Filename"' %}
 
     For all options see http://www.uploadify.com/documentation/
 
@@ -69,7 +71,10 @@ def multi_file_upload(parser, token):
     options = {}
     for arg in args:
         name, val = arg.split("=")
-        val = val.replace('\'', '').replace('"', '')
+        if val[0] in ["'", '"']:
+            val = val[1:]
+        if val[-1] in ["'", '"']:
+            val = val[:-1]
         options[name] = val
 
     return MultiFileUpload(**options)

@@ -23,7 +23,12 @@
             {% else %}
                 'swf': '{{ uploadify_path }}uploadify.swf',
                 'uploader': '{% url uploadify_upload %}{{ uploadify_query }}',
-                'formData': {'sessionid': '{{ request.session.session_key }}', {{ uploadify_data|safe }}},
+                'formData': {
+                    'sessionid': '{{ request.session.session_key }}',
+                    {% for uploadify_data_key, uploadify_data_value in uploadify_data.items %}
+                        '{{ uploadify_data_key }}': {{ uploadify_data_value }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                },
                 'onQueueComplete': uploadify_allComplete,
             {% endif %}
             'cancelImg': '{{ uploadify_path }}cancel.png',
@@ -33,7 +38,9 @@
             'onComplete': uploadify_complete,
             'onInit': uploadify_init,
             'onUploadStart': uploadify_uploadStart,
-            {{ uploadify_options|safe }}
+            {% for option_key, option_value in uploadify_options.items %}
+                '{{ option_key }}': {{ option_value }}{% if not forloop.last %},{% endif %}
+            {% endfor %}
         });
 
         $('#upload').click(function(){
