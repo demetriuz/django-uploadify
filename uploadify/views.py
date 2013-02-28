@@ -23,5 +23,8 @@ def upload(request, *args, **kwargs):
             data=request.FILES[filename])
         for received, response in received_list:
             if response is not None:
-                return json_response(response)
+                if isinstance(response, (dict, list)):
+                    return json_response(response)
+                else:
+                    return response
     raise Http404
